@@ -1,0 +1,112 @@
+Use						Purpose
+
+
+[Bind(Prefix="id")] 			    	In front of an argument inside an Action 
+						inside a Controller to bind the argument
+						with a certain keyword
+
+[Bind(Exclude="")]				In front of a model argument inside an 
+						Action inside a Controller to exclude some 
+						properties in the database to prevent mass assignment
+
+
+
+Attributes before specific properties inside the model to:
+
+--Validate data (both server and client side)
+	
+[Range(1,10)]
+	
+[Required] ...
+
+
+Override ValidationAttribute class inside a model to create a custom validation attribute (server side)
+
+
+--Display data in a certain way
+	
+[Display(Name="UserName")]
+
+[DisplayFormat(NullDisplayText="anonymous")] ...
+
+
+
+Implement IValidateObject inside a Model class to check the entire model, as when we need to check that some information matches. The message will pop up wherever we put Html.ValidationSummary(true) inside an Html.BeginForm() .
+
+
+Url.action("Whatever") This cs razor function will populate the cshtml of a view with the url of the Whatever action of the related controller. (Look up documentation for more)
+
+Inside any html form, a property named data-(anything here) is going to be skipped by the browser. After all the objects are loaded into memory, we can use this labels to program specific behaviours using javascript.
+
+Attribute 	[RequireHttps] to force the login to check if it's receiving data from an SSL encrypted connection. 
+		[ValidateAntiForgeryToken] to validate a form with a unique token. (vs CSRF attack). For this to
+				work, we have to call Html.AntiForgeryToken() razor function in the corresponding
+				view
+
+CSS attack can be prevented by encoding every imput using Html.encode()
+
+Javascript (Jquery)
+===================
+$(function () {})   function declaration ?
+$("(form, input, etc.)[data-(anything here)]")  Will look for all the instances of a tag (form, input, etc.) with this property and return it.
+Ex:
+  $("form[data-manolito-thisone='true']").submit(ajaxFormSubmit);
+  $("input[data-manolito-autocomplete]").each(createAutoComplete);
+
+
+
+A .min. file is minified (removed unnecessary whitespace and reducing names of unexposed variables)
+
+
+
+
+Power Shell PM 
+(Nuget)
+
+
+Enable-Migrations
+	-ContextTypeName (Put the database Class context here)
+	Creates the migrations folder with the configurations.cs file.
+	
+	Configuration.cs file
+	=====================
+	AutomaticMigrationsEnabled = true
+	
+	For seeding roles and authentication use:
+	
+	WebSecurity.InitializeDatabaseConnection("DefaultConnection",
+		"UserProfile", "UserId", "UserName", autoCreateTables: true);
+
+	var roles = (SimpleRoleProvider) Roles.Provider;
+	var membership = (SimpleMembershipProvider) Membership.Provider;
+
+	Ex:
+	roles.RoleExists("Admin");
+	membership.CreateUserAndAccount();
+	roles.CreateRole("Admin");
+	roles.AddUsersToRoles();
+	
+	NOTE: A configuration in Web.Config is needed.
+		Inside <configuration> / <system.web>, after <pages>
+
+	<roleManager enabled="true" defaultProvider="simple">
+		<providers>
+			</clear>
+			<add name="simple" type="WebMatrix.WebData.SimpleRoleProvider",WebMatrix.WebData"/>
+		</providers>
+	</roleManager>
+	<membership defaultProvider="simple">
+		<providers>
+			</clear>
+			<add name="simple" type="WebMatrix.WebData.SimpleMembershipProvider,WebMatrix.WebData">
+		</providers>
+	</membership>
+
+	That sets up configurations for the migration application, which is NOT a WebApp and it's not 	initialy configured to access and modify this.
+		
+	
+Update-Database
+
+		-Verbose			To see what's happenning
+
+		-Force				To force the update despite any warnings			
